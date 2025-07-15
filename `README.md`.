@@ -1,0 +1,158 @@
+`README.md`.
+
+-----
+
+````markdown
+# Manual de Instalação Completo: Agente web-ui
+
+Este manual consolida o processo de instalação completo e corrigido para o agente `web-ui` e suas dependências não documentadas (`browser-use`, `bubus`). O processo original é pouco documentado e requer vários passos manuais. Siga este guia para uma instalação limpa e funcional em sistemas baseados em Ubuntu, como o Zorin OS.
+
+## Pré-requisito Essencial: Python 3.11
+
+O projeto exige a versão **3.11 ou superior** do Python. Muitos sistemas (como o Zorin OS baseado no Ubuntu 22.04) vêm com a versão 3.10 por padrão. Este passo instala a versão correta sem interferir com a versão padrão do sistema.
+
+```bash
+sudo apt update
+sudo apt install python3.11 python3.11-venv
+````
+
+-----
+
+## Passo 1: Download de Todos os Componentes do Projeto
+
+O projeto é dividido em três repositórios separados. Comece na sua pasta pessoal (`~`) e baixe todos eles.
+
+```bash
+cd ~
+git clone [https://github.com/browser-use/web-ui.git](https://github.com/browser-use/web-ui.git)
+git clone [https://github.com/browser-use/browser-use.git](https://github.com/browser-use/browser-use.git)
+git clone [https://github.com/browser-use/bubus.git](https://github.com/browser-use/bubus.git)
+```
+
+*Ao final, você terá três novas pastas na sua pasta pessoal: `web-ui`, `browser-use` e `bubus`.*
+
+-----
+
+## Passo 2: Estruturação Correta das Pastas
+
+Mova as pastas das dependências (`browser-use` e `bubus`) para DENTRO da pasta principal do projeto (`web-ui`) para manter tudo organizado e acessível para o Python.
+
+```bash
+mv browser-use web-ui/
+mv bubus web-ui/
+```
+
+-----
+
+## Passo 3: Configuração do Ambiente Virtual
+
+Entre na pasta do projeto e crie um ambiente virtual isolado, usando a versão `3.11` do Python.
+
+```bash
+cd web-ui
+python3.11 -m venv venv
+source venv/bin/activate
+```
+
+*Após este passo, você deverá ver `(venv)` no início do seu prompt de comando.*
+
+-----
+
+## Passo 4: Instalação das Dependências (Sequência Crítica)
+
+Esta é a parte mais importante. As dependências precisam ser instaladas na ordem correta, dos pacotes mais profundos para os mais superficiais.
+
+### 4.1 - Instale `bubus`
+
+```bash
+cd bubus
+pip install -e .
+cd ..
+```
+
+### 4.2 - Instale `browser-use`
+
+```bash
+cd browser-use
+pip install -e .
+cd ..
+```
+
+### 4.3 - Prepare e Instale os Requisitos Restantes
+
+Edite o arquivo `requirements.txt` para remover uma linha que causa conflito.
+
+```bash
+nano requirements.txt
+```
+
+No editor, encontre e apague a linha que começa com `browser-use==...`. Depois, salve e saia (`Ctrl+X`, `S`, `Enter`).
+
+Agora, instale o resto dos pacotes:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4.4 - Instale o Pacote `lxml` Corretivo
+
+A instalação requer um pacote extra que foi separado da biblioteca `lxml`.
+
+```bash
+pip install lxml_html_clean
+```
+
+-----
+
+## Passo 5: Configuração da Chave de API
+
+Crie o arquivo de ambiente para guardar sua chave secreta.
+
+```bash
+# Este comando copia o exemplo. Se der erro de "arquivo não encontrado", não tem problema.
+cp .env.example .env
+
+# Abra o editor para criar/editar o arquivo .env
+nano .env
+```
+
+Dentro do editor, cole a linha da sua chave de API. **Use APENAS UMA das opções abaixo.**
+
+**Para OpenAI (GPT):**
+
+```
+OPENAI_API_KEY="sk-sua_chave_secreta"
+```
+
+**OU para Google (Gemini):**
+
+```
+GOOGLE_API_KEY="AIzaSy...sua_chave_secreta"
+```
+
+Salve o arquivo e saia (`Ctrl+X`, `S`, `Enter`).
+
+-----
+
+## Passo 6: Execução do Agente
+
+Com tudo instalado e configurado, este é o comando final para iniciar o agente.
+
+```bash
+python webui.py
+```
+
+O terminal deverá exibir uma mensagem de sucesso:
+`* Running on local URL: http://127.0.0.1:7788`
+
+-----
+
+## Como Usar e Parar o Agente
+
+  - **Para usar:** Copie o endereço `http://127.0.0.1:7788` que aparece no terminal e cole no seu navegador.
+  - **Para parar:** Volte para a janela do terminal onde o agente está rodando e pressione as teclas `Ctrl + C`.
+
+<!-- end list -->
+
+```
+```
